@@ -1,0 +1,48 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: fetch-app
+spec:
+  inputs:
+    resources:
+      - name: git-source
+        type: git
+  params:
+    - name: pathToDockerFile
+      description: The path to the dockerfile to build
+      default: /workspace/git-source/registry/example/helloworld/Dockerfile
+    - name: pathToContext
+      description: >-
+        The build context used by Kaniko
+        (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
+      default: /workspace/git-source/registry/example/helloworld
+  outputs:
+    resources:
+      - name: builtImage
+        type: image
+  steps:
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor:v0.9.0
+      # specifying DOCKER_CONFIG is required to allow kaniko to detect docker credential
+      env:
+        - name: "DOCKER_CONFIG"
+          value: "/builder/home/.docker/"
+      command:
+        - /kaniko/executor
+      args:
+        - --insecure
+        - --dockerfile=${inputs.params.pathToDockerFile}
+        - --destination=${outputs.resources.builtImage.url}
+        - --context=${inputs.params.pathToContext}
+    - name: update-image
+      image: quay.io/rhdevelopers/tutorial-tools:0.0.3
+      command:
+        - yq
+      args:
+        - "w"
+        - "-i"
+        - "-d*"
+        - "./deployment.yaml"
+        - "spec.template.spec.containers[0].image"
+        - "${outputs.resources.builtImage.url}"
+      workingDir: /workspace/git-source/registry/example

@@ -1,0 +1,44 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: build-and-deploy-pipeline
+spec:
+  resources:
+    - name: git-source
+      type: git
+    - name: builtImage
+      type: image
+  params:
+    - name: pathToDockerFile
+      description: The path to the dockerfile to build
+      default: /workspace/git-source/registry/example/helloworld/Dockerfile
+    - name: pathToContext
+      description: >-
+        The build context used by Kaniko
+        (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
+      default: /workspace/git-source/registry/example/helloworld
+  tasks:
+  - name: fetch-app
+    taskRef:
+      name: fetch-app
+    params:
+      - name: pathToDockerFile
+        value: "$(params.pathToDockerFile)"
+      - name: pathToContext
+        value: "$(params.pathToContext)"
+    resources:
+      inputs:
+        - name: git-source
+          resource: git-source
+      outputs:
+        - name: builtImage
+          resource: builtImage
+  - name: deploy
+    taskRef:
+      name: deploy
+    runAfter:
+      - fetch-app
+    resources:
+      inputs:
+        - name: git-source
+          resource: git-source
