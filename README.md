@@ -34,6 +34,6 @@ kc apply -f 4-pipeline.yaml
 kc apply -f 5-pipelineRun.yaml
 ```
 
-6. Deployment and Service files will be during pipeline run.
+6. Deployment and Service files will be applied during pipeline run.
 
-7. Ingress.yaml you can apply or you can modif7 2-task.yaml file to make pipeline deploy the ingress for you
+7. For 8-ingress.yaml you can apply it manually or you can modify 2-task.yaml file to make pipeline deploy it for you.
