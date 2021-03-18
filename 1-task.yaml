@@ -3,8 +3,8 @@ kind: Task
 metadata:
   name: fetch-app
 spec:
-  inputs:
-    resources:
+  resources:
+    inputs:
       - name: git-source
         type: git
   params:
@@ -16,8 +16,8 @@ spec:
         The build context used by Kaniko
         (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
       default: /workspace/git-source/registry/example/helloworld
-  outputs:
-    resources:
+  resources:
+    outputs:
       - name: builtImage
         type: image
   steps:
