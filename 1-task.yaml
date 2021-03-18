@@ -5,7 +5,7 @@ metadata:
 spec:
   resources:
     inputs:
-      - name: hello-git-source
+      - name: git-source
         type: git
   params:
     - name: pathToDockerFile
