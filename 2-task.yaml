@@ -1,35 +1,20 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: build-push
+  name: deploy
 spec:
-  inputs:
-    resources:
+  resources:
+    inputs:
       - name: git-source
         type: git
-  params:
-    - name: pathToDockerFile
-      description: The path to the dockerfile to build
-      default: /workspace/git-source/registry/example/helloworld/Dockerfile
-    - name: pathToContext
-      description: >-
-        The build context used by Kaniko
-        (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
-      default: /workspace/git-source/registry/example/helloworld
-  outputs:
-    resources:
-      - name: builtImage
-        type: image
   steps:
-    - name: update-image
+    - name: deploy-app
       image: quay.io/rhdevelopers/tutorial-tools:0.0.3
       command:
-        - yq
+        - kubectl
       args:
-        - "w"
-        - "-i"
-        - "-d*"
-        - "./deployment.yaml"
-        - "spec.template.spec.containers[0].image"
-        - "${outputs.resources.builtImage.url}"
+        - "apply"
+        - "--filename=./deployment.yaml"
+        - "--filename=./service.yaml"
+        # - "--filename=./ingress.yaml"
       workingDir: /workspace/git-source/registry/example
