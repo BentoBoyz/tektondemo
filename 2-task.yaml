@@ -17,4 +17,4 @@ spec:
         - "--filename=./deployment.yaml"
         - "--filename=./service.yaml"
         # - "--filename=./ingress.yaml"
-      workingDir: /workspace/git-source/registry/example
+      workingDir: /workspace/git-source
