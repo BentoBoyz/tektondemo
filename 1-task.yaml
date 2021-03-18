@@ -10,12 +10,12 @@ spec:
   params:
     - name: pathToDockerFile
       description: The path to the dockerfile to build
-      default: /workspace/git-source/registry/example/helloworld/Dockerfile
+      default: /workspace/git-source/helloworld/Dockerfile
     - name: pathToContext
       description: >-
         The build context used by Kaniko
         (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
-      default: /workspace/git-source/registry/example/helloworld
+      default: /workspace/git-source/helloworld
   resources:
     outputs:
       - name: builtImage
@@ -45,4 +45,4 @@ spec:
         - "./deployment.yaml"
         - "spec.template.spec.containers[0].image"
         - "${outputs.resources.builtImage.url}"
-      workingDir: /workspace/git-source/registry/example
+      workingDir: /workspace/git-source/
