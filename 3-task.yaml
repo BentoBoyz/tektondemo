@@ -4,7 +4,7 @@ metadata:
   name: deploy
 spec:
   resources:
-    imputs:
+    inputs:
       - name: git-source
         type: git
   steps:
